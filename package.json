@@ -15,5 +15,14 @@
   "bugs": {
     "url": "https://github.com/MarayML/LIM011-fe-md-links/issues"
   },
-  "homepage": "https://github.com/MarayML/LIM011-fe-md-links#readme"
+  "homepage": "https://github.com/MarayML/LIM011-fe-md-links#readme",
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.20.0",
+    "jest": "^25.1.0"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.0"
+  }
 }
