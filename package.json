@@ -4,7 +4,7 @@
   "description": "Validate/Count links in file Marckdown",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --coverage"
   },
   "repository": {
     "type": "git",
@@ -12,6 +12,9 @@
   },
   "author": "MarayML",
   "license": "ISC",
+  "bin": {
+    "md-links": "./src/cli.js"
+  },
   "bugs": {
     "url": "https://github.com/MarayML/LIM011-fe-md-links/issues"
   },
@@ -23,6 +26,10 @@
     "jest": "^25.1.0"
   },
   "dependencies": {
+    "chalk": "^3.0.0",
+    "commander": "^4.1.1",
+    "fetch-mock": "^9.0.0-beta.2",
+    "inquirer": "^7.0.4",
     "node-fetch": "^2.6.0"
   }
 }

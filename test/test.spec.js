@@ -1,39 +1,65 @@
-/* eslint-disable max-len */
 /* eslint-disable no-undef */
+const path = require('path');
+const fetchMock = require('../_mocks_/node-fetch');
+const mdLinks = require('../src/index');
+const {
+  changePathAbsolute, isFileMD, countLinks, pathExits, foundFilesMarckdown, isDirectories,
+} = require('../src/main');
 
-const { changePathAbsolute, isDirectories, isFileMD } = require('../src/index.js');
+const firtsRoute = path.join(process.cwd(), 'test', 'MDFile', 'README.md');
+const secondRoute = path.join(process.cwd(), 'test');
+const array = [firtsRoute];
 
-describe('changePathAbsolute', () => {
-  it('Debería ser una función', () => { expect(typeof changePathAbsolute).toBe('function'); });
+const firtsData = [{
+  href: 'https://es.wikipedia.org/Markdown',
+  text: 'Markdown',
+  file: firtsRoute,
+},
+{
+  href: 'https://nodejs.org/',
+  text: 'Node',
+  file: firtsRoute,
+}];
 
-  it('Para la entrada Ruta Relativa:../ deberia retornar Ruta Absoluta:/home/maray/Desktop/Marckdown', () => {
-    expect(changePathAbsolute('../')).toBe('/home/maray/Desktop/Marckdown');
-  });
-  it('Para la entrada Ruta Absoluta:/home/maray/Desktop/Marckdown deberia retornar Ruta Absoluta:/home/maray/Desktop/Marckdown/Desktop', () => {
-    expect(changePathAbsolute('/home/maray/Desktop/Marckdown')).toBe('/home/maray/Desktop/Marckdown');
-  });
+const secondData = [{
+  href: 'https://es.wikipedia.org/Markdown',
+  text: 'Markdown',
+  file: firtsRoute,
+  status: 404,
+  statusText: 'FAIL',
+},
+{
+  href: 'https://nodejs.org/',
+  text: 'Node',
+  file: firtsRoute,
+  status: 200,
+  statusText: 'OK',
+}];
+
+describe('test for functions with path library', () => {
+  it('should return absolute path', () => expect(changePathAbsolute('.'))
+    .toBe(process.cwd()));
+  it('should return true for Marckdown file', () => expect(isFileMD(firtsRoute))
+    .toBe(true));
+  it('should return true is path exist', () => expect(pathExits(firtsRoute))
+    .toBe(true));
 });
 
-describe('isDirectories', () => {
-  it('Debería ser una función', () => { expect(typeof isDirectories).toBe('function'); });
-
-  it('Deberia retornar True para /home/maray/Desktop/Marckdown', () => {
-    expect(isDirectories('/home/maray/Desktop/Marckdown')).toBe(true);
-  });
-
-  it('Deberia retornar False para /home/maray/Desktop/Marckdown/LIM011-fe-md-links/readme.md', () => {
-    expect(isDirectories('/home/maray/Desktop/Marckdown/LIM011-fe-md-links/readme.md')).toBe(false);
-  });
+describe('test for functions with fs library', () => {
+  it('should return true is route es directorie', () => expect(isDirectories(secondRoute)).toBe(true));
+  it('should return a array with links', () => expect(countLinks(array)).toEqual(firtsData));
+  it('should return a array with paths of file MD', () => foundFilesMarckdown(secondRoute)
+    .then((result) => expect(result).toEqual(array)));
 });
 
-describe('isFileMD', () => {
-  it('Debería ser una función', () => { expect(typeof isFileMD).toBe('function'); });
+describe('mdLinks', () => {
+  it('should return a array of object whit 5 propertys', () => mdLinks(secondRoute, { validate: true, stats: false })
+    .then((result) => {
+      expect(result).toEqual(secondData);
+    }));
 
-  it('Deberia retornar False para /home/maray/Desktop/Marckdown/LIM011-fe-md-links/packge.json', () => {
-    expect(isFileMD('/home/maray/Desktop/Marckdown/LIM011-fe-md-links/package.json')).toBe(false);
-  });
-
-  it('Deberia retornar True para /home/maray/Desktop/Marckdown/LIM011-fe-md-links/readme.md', () => {
-    expect(isFileMD('/home/maray/Desktop/Marckdown/LIM011-fe-md-links/src/readme-2.md')).toBe(true);
-  });
+  it('deberia brindar array de objetos con 3 propiedades', () => mdLinks(secondRoute, { validate: true, stats: true })
+    .then((result) => {
+      expect(result).toEqual('Total: 2 \nUnique: 2 \nBroken: 1');
+    }));
 });
